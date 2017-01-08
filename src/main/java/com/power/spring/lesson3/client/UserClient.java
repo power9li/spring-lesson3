@@ -29,7 +29,7 @@ public class UserClient {
         //构造用户对象
         User user = new User();
         user.setEnabled(true);
-        user.setUserName("Rose");
+        user.setUserName("Rose7");
         user.setPassword(HexUtils.byte2hex(MD5Utils.getMD5("1234567")));
         //序列化
         String reqJsonBody = JSONUtils.toJSON(user);
