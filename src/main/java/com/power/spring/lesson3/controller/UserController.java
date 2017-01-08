@@ -1,8 +1,8 @@
 package com.power.spring.lesson3.controller;
 
-import com.power.spring.lession3.model.User;
-import com.power.spring.lession3.model.UserSession;
-import com.power.spring.service.UserService;
+import com.power.spring.lesson3.model.User;
+import com.power.spring.lesson3.model.UserSession;
+import com.power.spring.lesson3.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

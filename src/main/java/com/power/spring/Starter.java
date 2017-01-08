@@ -1,6 +1,6 @@
 package com.power.spring;
 
-import com.power.spring.config.MyConfiguration;
+import com.power.spring.lesson3.config.MyConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
