@@ -4,10 +4,12 @@ import com.power.spring.dao.UserDao;
 import com.power.spring.lession3.model.User;
 import com.power.spring.lession3.model.UserSession;
 import com.power.spring.service.UserService;
+import com.power.spring.utils.UserSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by shenli on 2017/1/8.
@@ -35,11 +37,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> queryUsers(String userNamePrex, boolean onlyValidUser) {
-        return null;
+        return userDao.queryUser(userNamePrex,onlyValidUser);
     }
 
     @Override
     public UserSession login(String userName, String md5EncodedPassword) {
-        return null;
+        User u = userDao.loadUserByNamePasswd(userName, md5EncodedPassword);
+        UserSession us = new UserSession();
+
+        if (u != null) {
+            if (u.isEnabled()) {
+                us.setUserName(u.getUserName());
+                us.setUserId(u.getUserId());
+                us.setValidSeconds(UserSessionUtils.VALID_TIME);
+                us.setCreateTime(System.currentTimeMillis());
+                us.setSessionId(UUID.randomUUID().toString());
+                UserSessionUtils.addUserSession(us);
+            }
+        }
+        return us;
     }
 }

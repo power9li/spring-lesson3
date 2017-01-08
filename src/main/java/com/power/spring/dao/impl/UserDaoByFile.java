@@ -1,9 +1,9 @@
 package com.power.spring.dao.impl;
 
 import com.google.gson.Gson;
-import com.power.spring.bean.User;
-import com.power.spring.bean.UserSession;
 import com.power.spring.dao.UserDao;
+import com.power.spring.lession3.model.User;
+import com.power.spring.lession3.model.UserSession;
 import com.power.spring.utils.HexUtils;
 import com.power.spring.utils.MD5Utils;
 import com.power.spring.utils.PropUtils;
@@ -82,6 +82,7 @@ public class UserDaoByFile implements UserDao {
         });
         return bl;
     }
+
 
     @Override
     public boolean deleteUser(final long userId) {
