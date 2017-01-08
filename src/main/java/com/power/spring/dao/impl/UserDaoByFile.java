@@ -6,10 +6,12 @@ import com.power.spring.lession3.model.User;
 import com.power.spring.lession3.model.UserSession;
 import com.power.spring.utils.HexUtils;
 import com.power.spring.utils.MD5Utils;
-import com.power.spring.utils.PropUtils;
 import com.power.spring.utils.UserSessionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,19 +27,33 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Created by shenli on 2017/1/1.
  */
-public class UserDaoByFile implements UserDao {
+@Component
+public class UserDaoByFile implements UserDao ,InitializingBean{
 
-    private static String FILE_PATH = PropUtils.getProp("user.file.path");
+    @Value("${user.file.path}")
+    private String filePath;
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    //    private static String filePath = PropUtils.getProp("user.file.path");
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
     private static AtomicLong maxUserId = new AtomicLong(1);
     private Lock read = rwLock.readLock();
     private Lock write = rwLock.writeLock();
-    private static final File maxIdFile = new File(FILE_PATH+"/maxid");
+    private File maxIdFile = null;
 
-    static {
-
+    public void init(){
         try {
+            System.out.println("filePath = " + filePath);
+            File fp = new File(filePath);
+            if (!fp.exists()) {
+                fp.mkdir();
+            }
+            maxIdFile = new File(filePath +"/maxid");
             if (!maxIdFile.exists()) {
+                System.out.println("maxIdFile.getPath() = " + maxIdFile.getPath());
                 maxIdFile.createNewFile();
             }
             String idStr = FileUtils.readFileToString(maxIdFile);
@@ -49,6 +65,8 @@ public class UserDaoByFile implements UserDao {
         }
     }
 
+
+
     @Override
     public boolean createUser(final User user) {
 
@@ -57,7 +75,7 @@ public class UserDaoByFile implements UserDao {
             long userId = maxUserId.incrementAndGet();
             user.setUserId(userId);
             user.setRegDate(new Date());
-            String filePath = FILE_PATH+"/users/"+userId;
+            String filePath = getFilePath() +"/users/"+userId;
             File f = new File(filePath);
             if (!f.exists()) {
                 if (!f.getParentFile().exists()) {
@@ -74,7 +92,7 @@ public class UserDaoByFile implements UserDao {
 
             //write UserId&&PasswdMD5 Index File
             String loginCheckKey = HexUtils.byte2hex(MD5Utils.getMD5(user.getUserName() + "&&" + user.getPassword()));
-            FileUtils.writeStringToFile(new File(FILE_PATH + "/UserPass/" + loginCheckKey), String.valueOf(userId));
+            FileUtils.writeStringToFile(new File(getFilePath() + "/UserPass/" + loginCheckKey), String.valueOf(userId));
 
             //write maxIdFile
             FileUtils.writeStringToFile(maxIdFile, String.valueOf(userId));
@@ -90,7 +108,7 @@ public class UserDaoByFile implements UserDao {
             if (userId == 0L) {
                 return false;
             }
-            File uF = new File(FILE_PATH+"/users/"+userId);
+            File uF = new File(filePath +"/users/"+userId);
             if (!uF.exists()) {
                 System.err.println("user file ["+uF.getName()+"] not exist;");
                 return false;
@@ -105,7 +123,7 @@ public class UserDaoByFile implements UserDao {
     @Override
     public boolean disableUser(final long userId) {
         boolean bl = writeOperation(() -> {
-            File f = new File(FILE_PATH + "/users/" + userId);
+            File f = new File(filePath + "/users/" + userId);
             if (!f.exists()) {
                 System.err.println("file ["+f.getName()+"] not exists;");
                 return false;
@@ -123,7 +141,7 @@ public class UserDaoByFile implements UserDao {
     @Override
     public List<User> queryUser(final String userNamePrex, final boolean onlyValidUser) {
         List<User> users = writeOperation(() -> {
-            File folder = new File(FILE_PATH+"/users/");
+            File folder = new File(filePath +"/users/");
             List<User> users2 = new ArrayList<User>();
             File[] files = folder.listFiles();
             for (File f : files) {
@@ -156,10 +174,10 @@ public class UserDaoByFile implements UserDao {
     public User loadUserByNamePasswd(final String userName, final String md5Passed) {
         User u = readOperation(()-> {
             String loginCheckKey = HexUtils.byte2hex(MD5Utils.getMD5(userName + "&&" + md5Passed));
-            File f = new File(FILE_PATH + "/UserPass/" + loginCheckKey);
+            File f = new File(filePath + "/UserPass/" + loginCheckKey);
             if (f.exists()) {
                 String userId = FileUtils.readFileToString(f);
-                File uf = new File(FILE_PATH + "/users/" + userId);
+                File uf = new File(filePath + "/users/" + userId);
                 if (uf.exists()) {
                     String json = FileUtils.readFileToString(uf);
                     User u2 = new Gson().fromJson(json, User.class);
@@ -176,7 +194,7 @@ public class UserDaoByFile implements UserDao {
         System.out.println("UserDaoByFile.hasSeamUserName(userName="+userName+")");
         boolean has = readOperation(()->{
             boolean has2 = false;
-            File uf = new File(FILE_PATH + "/users/");
+            File uf = new File(filePath + "/users/");
             File[] files = uf.listFiles();
             Gson gson = new Gson();
             for (File f : files) {
@@ -220,4 +238,8 @@ public class UserDaoByFile implements UserDao {
     }
 
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
+    }
 }

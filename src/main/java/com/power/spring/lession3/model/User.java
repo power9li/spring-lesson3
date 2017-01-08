@@ -1,7 +1,9 @@
 package com.power.spring.lession3.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@XmlRootElement
 public class User {
 
 	private long userId;
