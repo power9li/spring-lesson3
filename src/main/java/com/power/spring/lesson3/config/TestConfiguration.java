@@ -1,7 +1,7 @@
 package com.power.spring.lesson3.config;
 
 import com.power.spring.lesson3.dao.UserDao;
-import com.power.spring.lesson3.dao.impl.UserDaoByMemary;
+import com.power.spring.lesson3.dao.impl.UserDaoByMemory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +17,6 @@ public class TestConfiguration {
 
     @Bean
     public UserDao userDao(){
-        return new UserDaoByMemary();
+        return new UserDaoByMemory();
     }
 }

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Created by shenli on 2017/1/9.
  */
 @Component
-public class UserDaoByMemary implements UserDao {
+public class UserDaoByMemory implements UserDao {
 
 
     private Map<Long,User> users = new HashMap<>();
@@ -29,7 +29,7 @@ public class UserDaoByMemary implements UserDao {
         }
         user.setUserId(maxId.incrementAndGet());
         users.put(user.getUserId(), user);
-        System.out.println("save memary user = " + user);
+        System.out.println("save memory user = " + user);
         System.out.println("users.size() = " + users.size());
         return true;
     }
