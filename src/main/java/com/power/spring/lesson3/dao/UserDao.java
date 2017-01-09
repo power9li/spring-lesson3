@@ -22,4 +22,5 @@ public interface UserDao {
 
     boolean hasSeamUserName(String userName);
 
+    List<User> queryAll();
 }

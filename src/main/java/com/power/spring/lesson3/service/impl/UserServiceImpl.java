@@ -7,8 +7,10 @@ import com.power.spring.lesson3.service.UserService;
 import com.power.spring.lesson3.utils.UserSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -36,7 +38,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> queryUsers(String userNamePrex, boolean onlyValidUser) {
+    public List<User> queryUsers(@RequestBody Map<String,Object> map) {
+        String userNamePrex = (String)map.get("userNamePrex");
+        boolean onlyValidUser = (Boolean)map.get("onlyValidUser");
         return userDao.queryUser(userNamePrex,onlyValidUser);
     }
 
@@ -57,4 +61,11 @@ public class UserServiceImpl implements UserService {
         }
         return us;
     }
+
+    @Override
+    public List<User> queryAll() {
+        return userDao.queryAll();
+    }
+
+
 }

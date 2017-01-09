@@ -2,9 +2,15 @@ package com.power.spring.lesson3.client;
 
 
 import com.power.spring.lesson3.model.User;
+import com.power.spring.lesson3.protocol.Request;
+import com.power.spring.lesson3.protocol.Response;
+import com.power.spring.lesson3.protocol.StatusCode;
 import com.power.spring.lesson3.utils.HexUtils;
 import com.power.spring.lesson3.utils.JSONUtils;
 import com.power.spring.lesson3.utils.MD5Utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by shenli on 2016/12/31.
@@ -15,10 +21,18 @@ public class UserClient {
 
     public static void main(String[] args) {
 
-        doCreateUser();
-//        doDisableUser();
-//        doQueryUser();
+//        doQueryUser("zhangsan",false);
+        doQueryAll();
+        doDelUser(1);
+        doQueryAll();
+        doDelUser(3);
+        doDelUser(4);
+        doQueryAll();
+        doDelUser(2);
+        doQueryAll();
 
+//        doCreateUser();
+//        doDisableUser();
 
 //        server.destory();
 
@@ -52,8 +66,7 @@ public class UserClient {
 
     }
 
-    public static void doDisableUser(){
-        long userId = 5;
+    public static void doDisableUser(long userId){
         String reqJsonBody = JSONUtils.toJSON(userId);
         Request req = new Request("user/disable", reqJsonBody);
 //        Response resp = server.handle(req);
@@ -62,10 +75,20 @@ public class UserClient {
 
     }
 
-    public static void doQueryUser(){
-        String userName = "李四";
-        boolean onlyValidUser = true;
-        String reqJsonBody = JSONUtils.toJSON(userName, onlyValidUser);
+    public static void doDelUser(long userId) {
+        String reqJsonBody = JSONUtils.toJSON(userId);
+        Request req = new Request("user/delete", reqJsonBody);
+        Response resp = HttpClientWrapper.doRequest(req);
+        System.out.println("resp.getStatus() = " + resp.getStatus());
+        System.out.println("resp.getRespBody() = " + resp.getRespBody());
+
+    }
+
+    public static void doQueryUser(String userNamePrex, boolean onlyValidUser){
+        Map<String, Object> map = new HashMap<>();
+        map.put("userNamePrex", userNamePrex);
+        map.put("onlyValidUser", onlyValidUser);
+        String reqJsonBody = JSONUtils.toJSON(map);//JSONUtils.toJSON(userName, onlyValidUser);
         System.out.println("reqJsonBody = " + reqJsonBody);
         Request req = new Request("user/queryUsers", reqJsonBody);
 //        Response resp = server.handle(req);
@@ -76,4 +99,20 @@ public class UserClient {
             System.out.println("respBody = " + respBody);
         }
     }
+
+    public static void doQueryAll(){
+        Map<String, Object> map = new HashMap<>();
+        String reqJsonBody = JSONUtils.toJSON(map);//JSONUtils.toJSON(userName, onlyValidUser);
+        System.out.println("reqJsonBody = " + reqJsonBody);
+        Request req = new Request("user/queryAll", reqJsonBody);
+//        Response resp = server.handle(req);
+        Response resp = HttpClientWrapper.doRequest(req);
+        System.out.println("resp.getStatus() = " + resp.getStatus());
+        if (resp.getStatus().equals(StatusCode.NORMAL)) {
+            String respBody = resp.getRespBody();
+            System.out.println("respBody = " + respBody);
+        }
+    }
+
+
 }

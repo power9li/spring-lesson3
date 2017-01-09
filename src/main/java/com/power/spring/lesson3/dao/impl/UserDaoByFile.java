@@ -211,6 +211,22 @@ public class UserDaoByFile implements UserDao ,InitializingBean{
         return has;
     }
 
+    @Override
+    public List<User> queryAll() {
+        List<User> users = writeOperation(() -> {
+            File folder = new File(filePath +"/users/");
+            List<User> users2 = new ArrayList<User>();
+            File[] files = folder.listFiles();
+            for (File f : files) {
+                String uJson = FileUtils.readFileToString(f);
+                User u = new Gson().fromJson(uJson, User.class);
+                users2.add(u);
+            }
+            return users2;
+        });
+        return users;
+    }
+
     public <T> T writeOperation(Callable<T> cab){
         T t = null;
         try {

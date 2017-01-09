@@ -4,23 +4,25 @@ import com.power.spring.lesson3.dao.UserDao;
 import com.power.spring.lesson3.model.User;
 import com.power.spring.lesson3.model.UserSession;
 import com.power.spring.lesson3.utils.UserSessionUtils;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by shenli on 2017/1/9.
  */
-@Component
 public class UserDaoByMemory implements UserDao {
-
 
     private Map<Long,User> users = new HashMap<>();
     private AtomicLong maxId = new AtomicLong(1);
+
+    public UserDaoByMemory(List<User> userList){
+        for (User u : userList) {
+            Long uid = maxId.incrementAndGet();
+            u.setUserId(uid);
+            users.put(uid, u);
+        }
+    }
 
     @Override
     public boolean createUser(User user) {
@@ -52,11 +54,19 @@ public class UserDaoByMemory implements UserDao {
 
     @Override
     public List<User> queryUser(String userNamePrex, boolean onlyValidUser) {
+        System.out.println("UserDaoByMemory.queryUser");
+        System.out.println("users.size() = " + users.size());
         List<User> subList = new ArrayList<>();
         for(User u : users.values()){
+            System.out.println("u.getUserName() = " + u.getUserName());
             if (u.getUserName().startsWith(userNamePrex)) {
-                UserSession us = UserSessionUtils.getSessionByUserId(u.getUserId());
-                if (us != null && us.isValid()) {
+                if(onlyValidUser) {
+                    UserSession us = UserSessionUtils.getSessionByUserId(u.getUserId());
+                    if (us != null && us.isValid()) {
+                        subList.add(u);
+                    }
+                }
+                else{
                     subList.add(u);
                 }
             }
@@ -82,5 +92,13 @@ public class UserDaoByMemory implements UserDao {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<User> queryAll() {
+        List<User> list = new ArrayList<>();
+        Collection<User> values = users.values();
+        list.addAll(values);
+        return list;
     }
 }

@@ -12,6 +12,15 @@ public class User {
 	private boolean enabled;
 	private Date regDate;
 
+	public User(){}
+
+	public User(String userName, String password, boolean enabled){
+		this.userName = userName;
+		this.password = password;
+		this.enabled = enabled;
+	}
+
+
 	public long getUserId() {
 		return userId;
 	}

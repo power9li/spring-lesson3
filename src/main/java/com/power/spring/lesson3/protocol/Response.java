@@ -1,4 +1,4 @@
-package com.power.spring.lesson3.client;
+package com.power.spring.lesson3.protocol;
 
 /**
  * Created by shenli on 2017/1/1.

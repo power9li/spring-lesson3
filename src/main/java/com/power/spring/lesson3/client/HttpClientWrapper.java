@@ -1,5 +1,8 @@
 package com.power.spring.lesson3.client;
 
+import com.power.spring.lesson3.protocol.Request;
+import com.power.spring.lesson3.protocol.Response;
+import com.power.spring.lesson3.protocol.StatusCode;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

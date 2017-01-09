@@ -51,8 +51,8 @@ public class UserController {
 
     @RequestMapping("/delete")
     @ResponseBody
-    public Map<String,Object> delete(Long userId){
-        System.out.println("UserController.delete");
+    public Map<String,Object> delete(@RequestBody Long userId){
+        System.out.println("UserController.delete("+userId+")");
         Map<String, Object> map = new HashMap<>();
         boolean rst = userService.deleteUser(userId);
         map.put("success", rst);
@@ -61,7 +61,7 @@ public class UserController {
 
     @RequestMapping("/disable")
     @ResponseBody
-    public Map<String,Object> disable(Long userId){
+    public Map<String,Object> disable(@RequestBody Long userId){
         System.out.println("UserController.disable");
         Map<String, Object> map = new HashMap<>();
         boolean rst = userService.disableUser(userId);
@@ -71,13 +71,25 @@ public class UserController {
 
     @RequestMapping("/queryUsers")
     @ResponseBody
-    public Map<String,Object> queryUsers(String userNamePrex, boolean onlyValidUser){
-        System.out.println("UserController.queryUsers");
+    public Map<String,Object> queryUsers(@RequestBody Map<String,Object> params){
+        System.out.println(params.keySet().toString());
+        String userNamePrex = (String)params.get("userNamePrex");
+        boolean onlyValidUser = (Boolean) params.get("onlyValidUser");
+        System.out.println("UserController.queryUsers(userNamePrex="+userNamePrex+",onlyValidUser="+onlyValidUser+")");
         Map<String, Object> map = new HashMap<>();
-        List<User> users = userService.queryUsers(userNamePrex, onlyValidUser);
+        List<User> users = userService.queryUsers(params);
         map.put("success", true);
         map.put("users", users);
         return map;
+    }
+
+    @RequestMapping("/queryAll")
+    @ResponseBody
+    public Map<String,Object> queryAll(){
+        System.out.println("UserController.queryAll");
+        return new HashMap(){{
+            put("users", userService.queryAll());
+        }};
     }
 
     @RequestMapping("/login")

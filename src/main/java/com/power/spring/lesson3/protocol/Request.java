@@ -1,4 +1,4 @@
-package com.power.spring.lesson3.client;
+package com.power.spring.lesson3.protocol;
 
 import com.sun.net.httpserver.Headers;
 
