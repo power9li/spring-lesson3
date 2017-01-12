@@ -20,13 +20,8 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    public UserController(){
-        System.out.println("UserController.create()");
-    }
-
     @Autowired
     private UserService userService;
-
 
     @RequestMapping("/index")
     @ResponseBody
@@ -41,9 +36,7 @@ public class UserController {
     @ResponseBody
     public Map<String,Object> create(@RequestBody User user){
         System.out.println("UserController.create");
-//        System.out.println("json = " + json);
         Map<String, Object> map = new HashMap<>();
-//        User user = new UserConverter().convert(json);
         boolean rst = userService.createUser(user);
         map.put("success", rst);
         return map;

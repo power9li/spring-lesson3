@@ -18,9 +18,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         System.out.println("WebMvcConfig.configureMessageConverters");
-//        converters.add(new Jaxb2RootElementHttpMessageConverter());
-//        converters.add(new MappingJackson2HttpMessageConverter());
-//        converters.add(new StringHttpMessageConverter());
         converters.add(new GsonHttpMessageConverter());
         super.configureMessageConverters(converters);
     }

@@ -23,13 +23,14 @@ public class UserClient {
 
 //        doQueryUser("zhangsan",false);
         doQueryAll();
-        doDelUser(1);
+        doCreateUser();
+//        doDelUser(1);
         doQueryAll();
-        doDelUser(3);
-        doDelUser(4);
-        doQueryAll();
-        doDelUser(2);
-        doQueryAll();
+//        doDelUser(3);
+//        doDelUser(4);
+//        doQueryAll();
+//        doDelUser(2);
+//        doQueryAll();
 
 //        doCreateUser();
 //        doDisableUser();
